@@ -116,10 +116,10 @@ function InviteContent() {
           </p>
           <div className="pt-2">
             <Link
-              href="/"
+              href="/login"
               className="inline-flex items-center justify-center w-full py-2.5 bg-[#242424] hover:bg-[#ba0c00] text-white text-xs font-bold rounded-lg transition-colors shadow-sm"
             >
-              Bumalik sa Public Portal
+              Pumunta sa Portal Login
             </Link>
           </div>
         </div>

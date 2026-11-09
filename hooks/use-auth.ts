@@ -70,48 +70,50 @@ export function useAuth() {
     };
   }, [checkAndLoadSession]);
 
-  const login = useCallback((newToken: string, newUser: User) => {
-    const expiresAt = Date.now() + EIGHT_HOURS_MS;
-    localStorage.setItem('sk_token', newToken);
-    localStorage.setItem('sk_user', JSON.stringify(newUser));
-    localStorage.setItem('sk_session_expires_at', expiresAt.toString());
-    setToken(newToken);
-    setUser(newUser);
-    window.dispatchEvent(new Event('sk_auth_changed'));
-  }, []);
-
-  const logout = useCallback(async () => {
-    try {
-      if (token) {
-        await apiClient.post('/auth/logout');
-      }
-    } catch {
-      // Ignore network errors on logout
-    } finally {
-      localStorage.removeItem('sk_token');
-      localStorage.removeItem('sk_user');
-      localStorage.removeItem('sk_session_expires_at');
-      setToken(null);
-      setUser(null);
+    const login = useCallback((newToken: string, newUser: User, timeoutMinutes?: number) => {
+      const durationMs = (timeoutMinutes && timeoutMinutes > 0 ? timeoutMinutes : 480) * 60 * 1000;
+      const expiresAt = Date.now() + durationMs;
+      localStorage.setItem('sk_token', newToken);
+      localStorage.setItem('sk_user', JSON.stringify(newUser));
+      localStorage.setItem('sk_session_expires_at', expiresAt.toString());
+      localStorage.setItem('sk_session_timeout_mins', (timeoutMinutes || 480).toString());
+      setToken(newToken);
+      setUser(newUser);
       window.dispatchEvent(new Event('sk_auth_changed'));
-      window.location.href = '/login';
-    }
-  }, [token]);
+    }, []);
 
-  const hasRole = useCallback((role: string) => {
-    return user?.roles?.includes(role) ?? false;
-  }, [user]);
+    const logout = useCallback(async () => {
+      try {
+        if (token) {
+          await apiClient.post('/auth/logout');
+        }
+      } catch {
+        // Ignore network errors on logout
+      } finally {
+        localStorage.removeItem('sk_token');
+        localStorage.removeItem('sk_user');
+        localStorage.removeItem('sk_session_expires_at');
+        setToken(null);
+        setUser(null);
+        window.dispatchEvent(new Event('sk_auth_changed'));
+        window.location.href = '/login';
+      }
+    }, [token]);
 
-  return {
-    user,
-    token,
-    isAuthenticated: !!token && !!user,
-    isLoading,
-    login,
-    logout,
-    hasRole,
-    refreshSession: checkAndLoadSession,
-  };
-}
+    const hasRole = useCallback((role: string) => {
+      return user?.roles?.includes(role) ?? false;
+    }, [user]);
+
+    return {
+      user,
+      token,
+      isAuthenticated: !!token && !!user,
+      isLoading,
+      login,
+      logout,
+      hasRole,
+      refreshSession: checkAndLoadSession,
+    };
+  }
 
 export default useAuth;

@@ -22,6 +22,12 @@ export interface SkOfficialProfile {
   official_id_number?: string | null;
   barangay_name: string;
   purok_sitio?: string | null;
+  educational_attainment?: string | null;
+  education_degree?: string | null;
+  education_school?: string | null;
+  skills?: string[] | null;
+  civil_status?: string | null;
+  blood_type?: string | null;
   passed_measures_count?: number;
   session_attendance_rate?: number;
   skmt_compliant?: boolean;
