@@ -273,6 +273,55 @@ export default function DashboardPage() {
     }
   };
 
+  const handleSaveSkills = async () => {
+    try {
+      setSaveLoading(true);
+      setSaveSuccess(null);
+      const res = await apiClient.put('/profile', {
+        first_name: firstName,
+        middle_name: middleName,
+        last_name: lastName,
+        suffix: suffix,
+        gender: gender,
+        bio_advocacy: bioAdvocacy,
+        contact_number: contactNumber,
+        nickname: nickname,
+        purok_sitio: purokSitio,
+        educational_attainment: educationalAttainment,
+        education_degree: educationDegree,
+        education_school: educationSchool,
+        skills: skills,
+        passed_measures_count: Number(passedMeasures) || 0,
+        session_attendance_rate: Number(sessionAttendance) || 0,
+        skmt_compliant: Boolean(skmtCompliant),
+      });
+
+      if (res.data?.success) {
+        const updated = res.data.data;
+        setProfile(updated);
+        try {
+          const stored = localStorage.getItem('sk_user');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            parsed.name = updated.full_name;
+            parsed.profile = updated;
+            localStorage.setItem('sk_user', JSON.stringify(parsed));
+            window.dispatchEvent(new Event('sk_auth_changed'));
+          }
+        } catch {
+          // ignore
+        }
+        setSaveSuccess('Matagumpay na na-update ang inyong mga hard skills at youth competencies!');
+        setTimeout(() => setSaveSuccess(null), 4000);
+      }
+    } catch (err: any) {
+      console.error('Failed to save skills:', err);
+      alert(err.response?.data?.message || 'Bigo ang pag-save ng skills.');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -704,9 +753,72 @@ export default function DashboardPage() {
 
       {/* Main Workspace (Screen Only) */}
       <main className="print:hidden max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-10 py-8 flex-1">
-        {/* TAB 1: Digital Pass */}
+        {/* TAB 1: Digital Pass & Competencies */}
         {activeTab === 'pass' && !isSuperAdmin && (
           <div className="space-y-6">
+            {/* Profiling ng Hard Skills & Competencies Showcase (Shows BEFORE Council Pass) */}
+            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#efedf0] shadow-sm space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#efedf0] pb-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                      Profiling ng Skills
+                    </span>
+                    <span className="text-xs text-[#74777e]">• {skills.length} Hard Skills Verified</span>
+                  </div>
+                  <h3 className="font-['Poppins'] text-lg font-bold text-[#0e0f0f] mt-1">
+                    Hard Skills &amp; Youth Competencies
+                  </h3>
+                  <p className="text-xs text-[#74777e] mt-0.5">
+                    Ang mga natukoy na kakayahan ng opisyal para sa mabisang pamumuno at pagpapatupad ng programa sa barangay.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setActiveTab('skills')}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#242424] hover:bg-[#ba0c00] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer self-start sm:self-auto shadow-sm"
+                >
+                  <span className="material-symbols-outlined text-[16px]">edit</span>
+                  I-update ang Skills
+                </button>
+              </div>
+
+              {/* Skills Badges Grid */}
+              <div className="flex flex-wrap gap-2.5">
+                {skills.length === 0 ? (
+                  <div className="text-xs text-[#74777e] italic p-4 bg-[#faf9fb] rounded-xl border border-[#efedf0] w-full text-center">
+                    Wala pang napipiling skills. I-click ang "I-update ang Skills" upang magdagdag.
+                  </div>
+                ) : (
+                  skills.map((skill) => (
+                    <div
+                      key={skill}
+                      className="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-900 text-xs font-bold flex items-center gap-2 shadow-2xs hover:bg-emerald-100 transition-colors"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                      <span>{skill}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Educational Background Highlight */}
+              <div className="p-4 bg-amber-50/60 rounded-xl border border-amber-200/70 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-amber-900 block">Antas ng Edukasyon</span>
+                  <span className="font-bold text-[#0e0f0f] mt-0.5 block">{educationalAttainment || "College Graduate"}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-amber-900 block">Kurso / Programa</span>
+                  <span className="font-semibold text-[#0e0f0f] mt-0.5 block">{educationDegree || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-amber-900 block">Paaralan / Unibersidad</span>
+                  <span className="font-semibold text-[#0e0f0f] mt-0.5 block">{educationSchool || 'N/A'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* The Official Pass ID Card & Official Council Records */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
                 {/* The Official Pass ID Card */}
@@ -860,68 +972,6 @@ export default function DashboardPage() {
                     </button>
                   </div>
                 )}
-              </div>
-            </div>
-
-            {/* Profiling ng Hard Skills & Competencies Showcase (Replaces measures prominence) */}
-            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#efedf0] shadow-sm space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#efedf0] pb-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                      Profiling ng Skills
-                    </span>
-                    <span className="text-xs text-[#74777e]">• {skills.length} Hard Skills Verified</span>
-                  </div>
-                  <h3 className="font-['Poppins'] text-lg font-bold text-[#0e0f0f] mt-1">
-                    Hard Skills &amp; Youth Competencies
-                  </h3>
-                  <p className="text-xs text-[#74777e] mt-0.5">
-                    Ang mga natukoy na kakayahan ng opisyal para sa mabisang pamumuno at pagpapatupad ng programa sa barangay.
-                  </p>
-                </div>
-                <button
-                  onClick={() => setActiveTab('skills')}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#242424] hover:bg-[#ba0c00] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer self-start sm:self-auto shadow-sm"
-                >
-                  <span className="material-symbols-outlined text-[16px]">edit</span>
-                  I-update ang Skills
-                </button>
-              </div>
-
-              {/* Skills Badges Grid */}
-              <div className="flex flex-wrap gap-2.5">
-                {skills.length === 0 ? (
-                  <div className="text-xs text-[#74777e] italic p-4 bg-[#faf9fb] rounded-xl border border-[#efedf0] w-full text-center">
-                    Wala pang napipiling skills. I-click ang "I-update ang Skills" upang magdagdag.
-                  </div>
-                ) : (
-                  skills.map((skill) => (
-                    <div
-                      key={skill}
-                      className="px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-900 text-xs font-bold flex items-center gap-2 shadow-2xs hover:bg-emerald-100 transition-colors"
-                    >
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                      <span>{skill}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* Educational Background Highlight */}
-              <div className="p-4 bg-amber-50/60 rounded-xl border border-amber-200/70 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-amber-900 block">Antas ng Edukasyon</span>
-                  <span className="font-bold text-[#0e0f0f] mt-0.5 block">{educationalAttainment || "College Graduate"}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-amber-900 block">Kurso / Programa</span>
-                  <span className="font-semibold text-[#0e0f0f] mt-0.5 block">{educationDegree || 'N/A'}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-amber-900 block">Paaralan / Unibersidad</span>
-                  <span className="font-semibold text-[#0e0f0f] mt-0.5 block">{educationSchool || 'N/A'}</span>
-                </div>
               </div>
             </div>
           </div>
