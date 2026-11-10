@@ -1574,20 +1574,6 @@ export default function DashboardPage() {
                           </p>
                         </div>
                       </div>
-
-                      <div className="mt-3 pt-2.5 border-t border-[#efedf0] flex items-center justify-between text-xs">
-                        <span className="font-mono text-[10px] text-[#ba0c00] font-bold">
-                          {officer.official_id_number || `SK-${officer.id}`}
-                        </span>
-                        <Link
-                          href={`/verify/${officer.official_id_number || officer.id}`}
-                          target="_blank"
-                          className="inline-flex items-center gap-0.5 text-xs font-bold text-[#ba0c00] hover:underline"
-                        >
-                          View Pass
-                          <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-                        </Link>
-                      </div>
                     </div>
                   ))}
                 </div>
