@@ -55,11 +55,20 @@ export default function DashboardPage() {
   const [contactNumber, setContactNumber] = useState('');
   const [nickname, setNickname] = useState('');
   const [purokSitio, setPurokSitio] = useState('');
-  const [skills, setSkills] = useState<string[]>(['Project Management', 'Youth Leadership', 'Event Organizing']);
+  const [skills, setSkills] = useState<string[]>([
+    'Web Development',
+    'Digital Marketing',
+    'Social Media Management',
+    'Drone Operation',
+    'Graphic Design',
+    'Videography',
+    'Community Organizing',
+    'Youth Sports Coaching',
+  ]);
   const [customSkillInput, setCustomSkillInput] = useState('');
-  const [educationalAttainment, setEducationalAttainment] = useState<string>("Bachelor's Degree / College Graduate");
+  const [educationalAttainment, setEducationalAttainment] = useState<string>("Graduated Cum Laude • 2023");
   const [educationDegree, setEducationDegree] = useState('BS Information Technology');
-  const [educationSchool, setEducationSchool] = useState('Taguig City University');
+  const [educationSchool, setEducationSchool] = useState('Polytechnic University of the Philippines – Manila');
   const [adminBarangaySearch, setAdminBarangaySearch] = useState('');
   const [passedMeasures, setPassedMeasures] = useState<number>(14);
   const [sessionAttendance, setSessionAttendance] = useState<number>(98.6);
@@ -134,6 +143,33 @@ export default function DashboardPage() {
       return true;
     });
   }, [councilOfficials, councilSearch, councilRoleFilter, councilPurokFilter]);
+
+  const categorizedSkills = useMemo(() => {
+    const tech: string[] = [];
+    const media: string[] = [];
+    const civic: string[] = [];
+
+    const techRegex = /web|digital|social media|drone|data|it|software|program|tech|system|network|cyber|code|comput/i;
+    const mediaRegex = /graphic|video|photo|writing|creative|public speaking|content|media|journalism|broadcasting|design|audio/i;
+
+    skills.forEach((skill) => {
+      const trimmed = skill.trim();
+      if (!trimmed) return;
+      if (techRegex.test(trimmed)) {
+        tech.push(trimmed);
+      } else if (mediaRegex.test(trimmed)) {
+        media.push(trimmed);
+      } else {
+        civic.push(trimmed);
+      }
+    });
+
+    return [
+      { id: 'tech', label: 'TECHNOLOGY & DIGITAL', items: tech },
+      { id: 'media', label: 'MEDIA & COMMUNICATIONS', items: media },
+      { id: 'civic', label: 'CIVIC LEADERSHIP', items: civic },
+    ];
+  }, [skills]);
 
   useEffect(() => {
     async function loadSession() {
@@ -685,8 +721,8 @@ export default function DashboardPage() {
                     : 'bg-white/10 text-white hover:bg-white/20'
                     }`}
                 >
-                  <span className="material-symbols-outlined text-[16px]">badge</span>
-                  My Profile &amp; Pass
+                  <span className="material-symbols-outlined text-[16px]">dashboard</span>
+                  Dashboard Overview
                 </button>
 
                 <button
@@ -740,9 +776,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Key Metric Summary Cards (Screen Only) */}
-      <div className="print:hidden max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-10 -mt-6 z-10">
-        {isSuperAdmin ? (
+      {/* Key Metric Summary Cards (Screen Only - Super Admin Only) */}
+      {isSuperAdmin && (
+        <div className="print:hidden max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-10 -mt-6 z-10">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-white p-5 rounded-xl shadow-sm border border-[#efedf0] text-center">
               <span className="text-[11px] uppercase tracking-wider text-[#74777e] font-bold block mb-1">
@@ -774,257 +810,165 @@ export default function DashboardPage() {
               <span className="text-[11px] text-[#74777e]">DILG RA 10742 Compliant</span>
             </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-white p-5 rounded-xl shadow-sm border border-[#efedf0] text-center">
-              <span className="text-[11px] uppercase tracking-wider text-[#74777e] font-bold block mb-1">
-                Hard Skills Profiled
-              </span>
-              <span className="font-['Poppins'] text-2xl font-bold text-[#ba0c00] block">
-                {skills.length}
-              </span>
-              <span className="text-[11px] text-[#74777e]">Verified Competencies</span>
-            </div>
-
-            <div className="bg-white p-5 rounded-xl shadow-sm border border-[#efedf0] text-center">
-              <span className="text-[11px] uppercase tracking-wider text-[#74777e] font-bold block mb-1">
-                Educational Attainment
-              </span>
-              <span className="font-['Poppins'] text-lg font-bold text-[#0e0f0f] block truncate">
-                {educationalAttainment || "College Graduate"}
-              </span>
-              <span className="text-[11px] text-[#74777e] truncate block">
-                {educationDegree || 'Verified Credential'}
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Main Workspace (Screen Only) */}
       <main className="print:hidden max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-10 py-8 flex-1">
-        {/* TAB 1: Digital Pass & Competencies */}
+        {/* TAB 1: Dashboard Overview (Official Contact & 2-Grid Records) */}
         {activeTab === 'pass' && !isSuperAdmin && (
           <div className="space-y-6">
-            {/* Hard Skills & Youth Competencies Card (Shows BEFORE Council Pass) */}
-            <div className="bg-white p-6 sm:p-7 rounded-2xl border border-[#efedf0] shadow-sm space-y-6">
-              <div className="border-b border-[#efedf0] pb-4">
-                <h3 className="font-['Poppins'] text-lg font-bold text-[#0e0f0f]">
-                  Hard Skills &amp; Youth Competencies
-                </h3>
-                <p className="text-xs text-[#74777e] mt-1">
-                  Opisyal na talaan ng mga kakayahan at kwalipikasyon para sa pamumuno sa barangay.
-                </p>
-              </div>
-
-              {/* Skills Badges Grid */}
-              <div className="space-y-2.5">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#74777e]">
-                  <span className="material-symbols-outlined text-[16px] text-[#ba0c00]">psychology</span>
-                  <span>Mga Natukoy na Kasanayan ({skills.length})</span>
+            {/* Top Bar: Official Contact & Records */}
+            <div className="bg-white rounded-2xl border border-[#efedf0] p-4 sm:p-5 shadow-sm">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="material-symbols-outlined text-[24px] text-[#ba0c00]">
+                    contact_page
+                  </span>
+                  <h2 className="font-['Poppins'] text-base sm:text-lg font-bold text-[#0e0f0f]">
+                    Official Contact &amp; Records
+                  </h2>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {skills.length === 0 ? (
-                    <div className="text-xs text-[#74777e] italic p-4 bg-[#faf9fb] rounded-xl border border-[#efedf0] w-full text-center">
-                      Wala pang nakatalang kasanayan sa profile.
-                    </div>
-                  ) : (
-                    skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#faf9fb] border border-[#efedf0] text-[#0e0f0f] text-xs font-semibold hover:border-[#c4c6ce] hover:bg-white transition-colors shadow-2xs"
-                      >
-                        <span className="material-symbols-outlined text-[15px] text-[#ba0c00]">verified</span>
-                        <span>{skill}</span>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1 lg:max-w-[780px]">
+                  {/* Official Email */}
+                  <div className="bg-[#f8f8fa] rounded-xl p-3 sm:px-4 sm:py-3 border border-[#efedf0]/60 flex items-center gap-3">
+                    <span className="material-symbols-outlined text-[20px] text-[#ba0c00] shrink-0">
+                      mail
+                    </span>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#74777e] block">
+                        OFFICIAL EMAIL
                       </span>
-                    ))
-                  )}
-                </div>
-              </div>
+                      <span
+                        className="text-xs sm:text-sm font-semibold text-[#0e0f0f] truncate block"
+                        title={user?.email || 'secretary@skportal.gov.ph'}
+                      >
+                        {user?.email || 'secretary@skportal.gov.ph'}
+                      </span>
+                    </div>
+                  </div>
 
-              {/* Educational Background Highlight */}
-              <div className="pt-4 border-t border-[#efedf0] space-y-2.5">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#74777e]">
-                  <span className="material-symbols-outlined text-[16px] text-[#ba0c00]">school</span>
-                  <span>Background sa Edukasyon</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="p-3.5 bg-[#faf9fb] rounded-xl border border-[#efedf0]">
-                    <span className="text-[10px] uppercase font-bold text-[#74777e] block">Antas ng Edukasyon</span>
-                    <span className="font-bold text-[#0e0f0f] text-xs mt-1 block truncate">
-                      {educationalAttainment || "College Graduate"}
+                  {/* Mobile / Hotline */}
+                  <div className="bg-[#f8f8fa] rounded-xl p-3 sm:px-4 sm:py-3 border border-[#efedf0]/60 flex items-center gap-3">
+                    <span className="material-symbols-outlined text-[20px] text-[#ba0c00] shrink-0">
+                      smartphone
                     </span>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#74777e] block">
+                        MOBILE / HOTLINE
+                      </span>
+                      <span className="text-xs sm:text-sm font-semibold text-[#0e0f0f] truncate block">
+                        {profile?.contact_number || '+63 917 555 2408'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="p-3.5 bg-[#faf9fb] rounded-xl border border-[#efedf0]">
-                    <span className="text-[10px] uppercase font-bold text-[#74777e] block">Kurso / Programa</span>
-                    <span className="font-semibold text-[#0e0f0f] text-xs mt-1 block truncate">
-                      {educationDegree || 'N/A'}
+
+                  {/* Office Location */}
+                  <div className="bg-[#f8f8fa] rounded-xl p-3 sm:px-4 sm:py-3 border border-[#efedf0]/60 flex items-center gap-3">
+                    <span className="material-symbols-outlined text-[20px] text-[#ba0c00] shrink-0">
+                      location_on
                     </span>
-                  </div>
-                  <div className="p-3.5 bg-[#faf9fb] rounded-xl border border-[#efedf0]">
-                    <span className="text-[10px] uppercase font-bold text-[#74777e] block">Paaralan / Unibersidad</span>
-                    <span className="font-semibold text-[#0e0f0f] text-xs mt-1 block truncate">
-                      {educationSchool || 'N/A'}
-                    </span>
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#74777e] block">
+                        OFFICE LOCATION
+                      </span>
+                      <span
+                        className="text-xs sm:text-sm font-semibold text-[#0e0f0f] truncate block"
+                        title={profile?.purok_sitio ? `${profile.purok_sitio}, Barangay ${barangayName}` : `Barangay ${barangayName}`}
+                      >
+                        {profile?.purok_sitio ? `${profile.purok_sitio}, Barangay ${barangayName}` : `Barangay ${barangayName}`}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* The Official Pass ID Card & Official Council Records */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-6">
-                {/* The Official Pass ID Card */}
-                <div className="bg-white rounded-2xl border border-[#efedf0] shadow-sm overflow-hidden">
-                  <div className="bg-[#242424] text-white p-6 flex items-center justify-between border-b-4 border-[#ba0c00]">
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#eebd90]">
-                        Republika ng Pilipinas • Lungsod ng Taguig
-                      </span>
-                      <h2 className="font-['Poppins'] text-lg font-bold">
-                        Sangguniang Kabataan Council Pass
-                      </h2>
-                      <p className="text-xs text-[#c8c6c5]">{barangayName}</p>
-                    </div>
-                    <div className="w-12 h-12 rounded-full bg-[#ba0c00] flex items-center justify-center font-extrabold text-white text-base shadow-sm shrink-0">
-                      SK
-                    </div>
+            {/* 2-Column Grid Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+              {/* Left Column: Education & Credentials */}
+              <div className="bg-white rounded-2xl border border-[#efedf0] p-6 sm:p-7 shadow-sm flex flex-col">
+                <div className="flex items-center gap-2.5 pb-4 border-b border-[#efedf0] mb-6">
+                  <span className="material-symbols-outlined text-[22px] text-[#ba0c00]">
+                    school
+                  </span>
+                  <h3 className="font-['Poppins'] text-lg font-bold text-[#0e0f0f]">
+                    Education &amp; Credentials
+                  </h3>
+                </div>
+
+                <div className="space-y-4 flex-1">
+                  {/* Degree & University Card */}
+                  <div className="bg-[#f8f8fa] rounded-xl p-5 border border-[#efedf0]/60">
+                    <h4 className="font-['Poppins'] text-base sm:text-lg font-bold text-[#0e0f0f]">
+                      {educationDegree || 'BS Information Technology'}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-[#43474d] mt-1 font-medium">
+                      {educationSchool || 'Polytechnic University of the Philippines – Manila'}
+                    </p>
+                    <p className="text-xs sm:text-sm font-bold text-[#ba0c00] mt-4">
+                      {educationalAttainment || 'Graduated Cum Laude • 2023'}
+                    </p>
                   </div>
 
-                  <div className="p-6 sm:p-8 space-y-6">
-                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                      <div className="shrink-0 text-center space-y-2">
-                        <div className="w-28 h-28 rounded-2xl overflow-hidden bg-[#0e0f0f] flex items-center justify-center text-white text-3xl font-extrabold font-['Poppins'] shadow-md border-2 border-[#efedf0]">
-                          {profile?.avatar_url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={profile.avatar_url}
-                              alt={displayName}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            displayName.split(' ').map((n) => n[0]).slice(0, 2).join('')
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex-1 space-y-2 text-center sm:text-left">
-                        <h3 className="font-['Poppins'] text-xl font-bold text-[#0e0f0f]">
-                          {displayName}
-                        </h3>
-                        <p className="text-sm font-bold text-[#ba0c00]">{positionTitle}</p>
-                        {profile?.committee_assigned && (
-                          <p className="text-xs text-[#43474d]">
-                            <strong className="text-[#0e0f0f]">Committee:</strong> {profile.committee_assigned}
-                          </p>
-                        )}
-                        <div className="pt-2 grid grid-cols-2 gap-2 text-xs border-t border-[#efedf0]">
-                          <div>
-                            <span className="text-[10px] uppercase text-[#74777e] font-bold">Term</span>
-                            <p className="font-semibold text-[#0e0f0f]">
-                              {settings.current_term_label ? settings.current_term_label.replace(/^Term\s*/i, '') : '2023 - 2026'}
-                            </p>
-                          </div>
-                          <div>
-                            <span className="text-[10px] uppercase text-[#74777e] font-bold">Status</span>
-                            <p className="font-semibold text-emerald-600">Active Incumbent</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* QR Code Container */}
-                      <div className="shrink-0 flex flex-col items-center p-3 rounded-xl bg-[#faf9fb] border border-[#efedf0]">
-                        <QRCodeSVG
-                          value={verifyUrl}
-                          size={96}
-                          level="H"
-                        />
-                        <span className="text-[9px] font-mono text-[#74777e] mt-1.5 font-bold tracking-wider">
-                          SCAN TO VERIFY
-                        </span>
-                      </div>
-                    </div>
-
-                    {profile?.bio_advocacy && (
-                      <div className="p-4 bg-red-50/50 border-l-4 border-[#ba0c00] rounded-r-xl text-xs italic text-[#43474d] leading-relaxed">
-                        "{profile.bio_advocacy}"
-                      </div>
-                    )}
-
-                    <div className="pt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[#efedf0]">
-                      <Link
-                        href={`/verify/${officialId}`}
-                        target="_blank"
-                        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-[#ba0c00] text-xs font-bold transition-all border border-red-200 shadow-sm"
-                      >
-                        <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-                        Public Link
-                      </Link>
-                      <div className="flex items-center gap-2.5">
-                        <button
-                          onClick={() => setShowPvcModal(true)}
-                          className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#f5f3f6] hover:bg-[#efedf0] text-[#1b1c1e] text-xs font-bold rounded-lg transition-colors cursor-pointer border border-[#c4c6ce] shadow-sm"
-                        >
-                          <span className="material-symbols-outlined text-[16px]">visibility</span>
-                          Preview PVC ID
-                        </button>
-                        <button
-                          onClick={() => window.print()}
-                          className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-[#242424] hover:bg-[#ba0c00] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-md"
-                        >
-                          <span className="material-symbols-outlined text-[16px]">print</span>
-                          Print Pass
-                        </button>
-                      </div>
-                    </div>
+                  {/* Verified Eligibility Card */}
+                  <div className="bg-[#f8f8fa] rounded-xl p-5 border border-[#efedf0]/60">
+                    <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#74777e] block">
+                      VERIFIED ELIGIBILITY
+                    </span>
+                    <h4 className="font-['Poppins'] text-sm sm:text-base font-bold text-[#0e0f0f] mt-1.5">
+                      Civil Service Professional Eligibility
+                    </h4>
+                    <p className="text-xs sm:text-sm text-[#74777e] mt-1 font-medium">
+                      Civil Service Commission • Passed 2023
+                    </p>
                   </div>
                 </div>
               </div>
 
-              {/* Right Side Column */}
-              <div className="space-y-4">
-                <div className="bg-white p-5 rounded-xl border border-[#efedf0] shadow-sm space-y-3 text-xs">
-                  <h3 className="font-['Poppins'] text-sm font-bold text-[#0e0f0f] border-b border-[#efedf0] pb-2 flex items-center justify-between">
-                    <span>Official Council Records</span>
-                    <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded">Active</span>
+              {/* Right Column: Skills & Competencies */}
+              <div className="bg-white rounded-2xl border border-[#efedf0] p-6 sm:p-7 shadow-sm flex flex-col">
+                <div className="flex items-center gap-2.5 pb-4 border-b border-[#efedf0] mb-6">
+                  <span className="material-symbols-outlined text-[22px] text-[#ba0c00]">
+                    psychology
+                  </span>
+                  <h3 className="font-['Poppins'] text-lg font-bold text-[#0e0f0f]">
+                    Skills &amp; Competencies
                   </h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#74777e]">Official Email:</span>
-                    <span className="font-semibold text-[#0e0f0f]">{user?.email}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#74777e]">Official Contact:</span>
-                    <span className="font-semibold text-[#0e0f0f]">{profile?.contact_number || 'N/A'}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#74777e]">Purok / Sitio:</span>
-                    <span className="font-semibold text-[#0e0f0f]">{profile?.purok_sitio || 'Barangay Center'}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#74777e]">Gender / Nickname:</span>
-                    <span className="font-semibold text-[#0e0f0f]">
-                      {profile?.gender ? profile.gender.toUpperCase() : 'N/A'} {profile?.nickname ? `("${profile.nickname}")` : ''}
-                    </span>
-                  </div>
                 </div>
 
-                {isChairOrAdmin && (
-                  <div className="bg-[#ba0c00]/5 border border-[#ba0c00]/20 p-5 rounded-xl space-y-2.5">
-                    <span className="text-xs font-bold text-[#ba0c00] flex items-center gap-1">
-                      <span className="material-symbols-outlined text-sm">person_add</span>
-                      Onboard New Official
-                    </span>
-                    <p className="text-xs text-[#43474d] leading-relaxed">
-                      Generate secure single-use invitation links for incoming Kagawads, Secretaries, or Treasurers.
-                    </p>
-                    <button
-                      onClick={() => setActiveTab('invite')}
-                      className="w-full py-2 bg-[#ba0c00] hover:bg-[#e81100] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
-                    >
-                      Open Invite Generator
-                    </button>
-                  </div>
-                )}
+                <div className="space-y-5 flex-1">
+                  {categorizedSkills.map((category) => {
+                    if (category.items.length === 0) return null;
+                    return (
+                      <div key={category.id} className="space-y-2.5">
+                        <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#43474d]">
+                          {category.label}
+                        </h4>
+                        <div className="flex flex-wrap gap-2.5">
+                          {category.items.map((skill) => (
+                            <span
+                              key={skill}
+                              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#f8f8fa] border border-[#efedf0] text-xs font-semibold text-[#0e0f0f] shadow-2xs hover:bg-white hover:border-[#c4c6ce] transition-colors"
+                            >
+                              <span className="material-symbols-outlined text-[16px] text-[#ba0c00]">
+                                check_circle
+                              </span>
+                              <span>{skill}</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {skills.length === 0 && (
+                    <div className="text-xs text-[#74777e] italic p-6 bg-[#faf9fb] rounded-xl border border-[#efedf0] text-center">
+                      Walang nakatalang kasanayan sa profile.
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
