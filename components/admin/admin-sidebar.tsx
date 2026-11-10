@@ -55,7 +55,7 @@ export default function AdminSidebar({
                 SK
               </div>
               <div className="flex flex-col">
-                  <span className="font-['Poppins'] text-sm font-bold tracking-tight text-white leading-tight line-clamp-1">
+                  <span suppressHydrationWarning className="font-['Poppins'] text-sm font-bold tracking-tight text-white leading-tight line-clamp-1">
                     {settings.portal_name || 'Taguig SK Portal'}
                   </span>
                   <span className="text-[10px] uppercase font-bold text-[#eebd90] tracking-wider">

@@ -8,6 +8,7 @@ import AdminSidebar, { AdminSection } from '@/components/admin/admin-sidebar';
 import AdminHeader from '@/components/admin/admin-header';
 import UserDetailsModal from '@/components/admin/user-details-modal';
 import CreateUserModal from '@/components/admin/create-user-modal';
+import RoleModal from '@/components/admin/role-modal';
 import CivicLoader from '@/components/ui/civic-loader';
 import { TAGUIG_BARANGAYS } from '@/lib/constants';
 
@@ -23,6 +24,8 @@ export default function SuperAdminPage() {
   // Modals
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [selectedRoleForEdit, setSelectedRoleForEdit] = useState<any | null>(null);
 
   // Section 1: Dashboard Stats
   const [dashboardStats, setDashboardStats] = useState<any>(null);
@@ -734,14 +737,13 @@ export default function SuperAdminPage() {
                         <th className="py-3.5 px-4">Role</th>
                         <th className="py-3.5 px-4">Barangay &amp; Position</th>
                         <th className="py-3.5 px-4">Status</th>
-                        <th className="py-3.5 px-4">SKMT Status</th>
                         <th className="py-3.5 px-4 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#efedf0]">
                       {usersLoading ? (
                         <tr>
-                          <td colSpan={6} className="py-12 text-center text-[#74777e]">
+                          <td colSpan={5} className="py-12 text-center text-[#74777e]">
                             <div className="flex items-center justify-center gap-2">
                               <div className="w-4 h-4 border-2 border-[#ba0c00] border-t-transparent rounded-full animate-spin"></div>
                               <span>Loading user records...</span>
@@ -750,7 +752,7 @@ export default function SuperAdminPage() {
                         </tr>
                       ) : users.length === 0 ? (
                         <tr>
-                          <td colSpan={6} className="py-12 text-center text-[#74777e]">
+                          <td colSpan={5} className="py-12 text-center text-[#74777e]">
                             No user accounts matching the selected criteria.
                           </td>
                         </tr>
@@ -824,20 +826,13 @@ export default function SuperAdminPage() {
                                 </span>
                               </td>
 
-                              <td className="py-3.5 px-4">
-                                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700">
-                                  <span className="material-symbols-outlined text-[15px] text-emerald-600">verified</span>
-                                  <span>Certified</span>
-                                </span>
-                              </td>
-
                               <td className="py-3.5 px-4 text-right">
                                 <div className="flex items-center justify-end gap-1.5">
                                   <button
                                     onClick={() => setSelectedUserId(u.id)}
                                     className="px-3 py-1.5 bg-[#f5f3f6] hover:bg-[#ba0c00] hover:text-white text-[#0e0f0f] text-xs font-bold rounded-lg transition-colors cursor-pointer"
                                   >
-                                    Inspect Dossier
+                                    View Records
                                   </button>
 
                                   <button
@@ -895,13 +890,28 @@ export default function SuperAdminPage() {
           {/* SECTION 3: ROLES & RBAC PERMISSIONS */}
           {currentSection === 'roles' && (
             <div className="space-y-6">
-              <div className="bg-white p-6 rounded-2xl border border-[#efedf0] shadow-xs space-y-2">
-                <h3 className="font-['Poppins'] text-lg font-bold text-[#0e0f0f]">
-                  Role-Based Access Control (RBAC) Architecture
-                </h3>
-                <p className="text-xs text-[#74777e]">
-                  Spatie permission assignments across Sangguniang Kabataan executive roles.
-                </p>
+              <div className="bg-white p-6 rounded-2xl border border-[#efedf0] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <h3 className="font-['Poppins'] text-lg font-bold text-[#0e0f0f]">
+                    Role-Based Access Control (RBAC) Architecture
+                  </h3>
+                  <p className="text-xs text-[#74777e]">
+                    Spatie permission assignments across Sangguniang Kabataan executive roles.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedRoleForEdit(null);
+                    setShowRoleModal(true);
+                  }}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#ba0c00] hover:bg-[#960a00] text-white text-xs font-semibold rounded-xl shadow-xs transition-colors shrink-0 cursor-pointer"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Create New Role
+                </button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -929,19 +939,37 @@ export default function SuperAdminPage() {
                         </p>
                       </div>
 
-                      <div className="pt-3 border-t border-[#efedf0] space-y-2">
-                        <span className="text-[10px] uppercase font-bold text-[#74777e] block">
-                          Assigned Capabilities:
-                        </span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {role.permissions?.map((p: string) => (
-                            <span
-                              key={p}
-                              className="px-2 py-0.5 rounded bg-[#f5f3f6] text-[10px] font-mono text-[#0e0f0f]"
-                            >
-                              {p}
-                            </span>
-                          ))}
+                      <div className="pt-3 border-t border-[#efedf0] space-y-3">
+                        <div className="space-y-1.5">
+                          <span className="text-[10px] uppercase font-bold text-[#74777e] block">
+                            Assigned Capabilities:
+                          </span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {role.permissions?.map((p: string) => (
+                              <span
+                                key={p}
+                                className="px-2 py-0.5 rounded bg-[#f5f3f6] text-[10px] font-mono text-[#0e0f0f]"
+                              >
+                                {p}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="pt-2 flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedRoleForEdit(role);
+                              setShowRoleModal(true);
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#0e0f0f] bg-[#f5f3f6] hover:bg-[#ece9ee] border border-[#e5e3e7] rounded-lg transition-colors cursor-pointer"
+                          >
+                            <svg className="w-3.5 h-3.5 text-[#ba0c00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Edit Role
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -1244,6 +1272,22 @@ export default function SuperAdminPage() {
             showToast('New official user account created successfully.');
             loadUsers(1);
             loadDashboardStats();
+          }}
+        />
+      )}
+
+      {/* Role Create / Edit Modal */}
+      {showRoleModal && (
+        <RoleModal
+          role={selectedRoleForEdit}
+          allPermissions={rolesData?.all_permissions || []}
+          onClose={() => {
+            setShowRoleModal(false);
+            setSelectedRoleForEdit(null);
+          }}
+          onSaved={() => {
+            showToast(selectedRoleForEdit ? 'Role permissions updated successfully.' : 'New role created successfully.');
+            loadRoles();
           }}
         />
       )}

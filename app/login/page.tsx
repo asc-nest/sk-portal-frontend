@@ -76,10 +76,10 @@ export default function LoginPage() {
         <div className="rounded-2xl bg-white shadow-xl border border-[#efedf0] p-8 sm:p-10">
           {/* Header */}
           <div className="pb-5 mb-5 border-b border-[#efedf0]">
-            <h1 className="font-['Poppins'] text-2xl font-bold text-[#0e0f0f] tracking-tight">
+            <h1 suppressHydrationWarning className="font-['Poppins'] text-2xl font-bold text-[#0e0f0f] tracking-tight">
               {settings.portal_name || 'Portal Authentication'}
             </h1>
-            <p className="text-xs text-[#43474d] mt-1">
+            <p suppressHydrationWarning className="text-xs text-[#43474d] mt-1">
               {settings.jurisdiction_name || 'Opisyal na pag-login para sa mga lider ng Sangguniang Kabataan'}
             </p>
           </div>

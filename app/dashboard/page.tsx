@@ -66,7 +66,7 @@ export default function DashboardPage() {
     'Youth Sports Coaching',
   ]);
   const [customSkillInput, setCustomSkillInput] = useState('');
-  const [educationalAttainment, setEducationalAttainment] = useState<string>("Graduated Cum Laude • 2023");
+  const [educationalAttainment, setEducationalAttainment] = useState<string>("Bachelor's Degree / College Graduate");
   const [educationDegree, setEducationDegree] = useState('BS Information Technology');
   const [educationSchool, setEducationSchool] = useState('Polytechnic University of the Philippines – Manila');
   const [adminBarangaySearch, setAdminBarangaySearch] = useState('');
@@ -726,17 +726,6 @@ export default function DashboardPage() {
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('skills')}
-                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${activeTab === 'skills'
-                    ? 'bg-[#ba0c00] text-white shadow-sm'
-                    : 'bg-white/10 text-white hover:bg-white/20'
-                    }`}
-                >
-                  <span className="material-symbols-outlined text-[16px]">psychology</span>
-                  Profiling ng Skills
-                </button>
-
-                <button
                   onClick={() => setActiveTab('council')}
                   className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${activeTab === 'council'
                     ? 'bg-[#ba0c00] text-white shadow-sm'
@@ -768,7 +757,7 @@ export default function DashboardPage() {
                     }`}
                 >
                   <span className="material-symbols-outlined text-[16px]">edit</span>
-                  Edit Profile
+                  Edit Profile &amp; Skills
                 </button>
               </>
             )}
@@ -885,290 +874,118 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* 2-Column Grid Layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-              {/* Left Column: Education & Credentials */}
-              <div className="bg-white rounded-2xl border border-[#efedf0] p-6 sm:p-7 shadow-sm flex flex-col">
-                <div className="flex items-center gap-2.5 pb-4 border-b border-[#efedf0] mb-6">
-                  <span className="material-symbols-outlined text-[22px] text-[#ba0c00]">
-                    school
-                  </span>
-                  <h3 className="font-['Poppins'] text-lg font-bold text-[#0e0f0f]">
-                    Education &amp; Credentials
-                  </h3>
-                </div>
-
-                <div className="space-y-4 flex-1">
-                  {/* Degree & University Card */}
-                  <div className="bg-[#f8f8fa] rounded-xl p-5 border border-[#efedf0]/60">
-                    <h4 className="font-['Poppins'] text-base sm:text-lg font-bold text-[#0e0f0f]">
-                      {educationDegree || 'BS Information Technology'}
-                    </h4>
-                    <p className="text-xs sm:text-sm text-[#43474d] mt-1 font-medium">
-                      {educationSchool || 'Polytechnic University of the Philippines – Manila'}
-                    </p>
-                    <p className="text-xs sm:text-sm font-bold text-[#ba0c00] mt-4">
-                      {educationalAttainment || 'Graduated Cum Laude • 2023'}
-                    </p>
-                  </div>
-
-                  {/* Verified Eligibility Card */}
-                  <div className="bg-[#f8f8fa] rounded-xl p-5 border border-[#efedf0]/60">
-                    <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#74777e] block">
-                      VERIFIED ELIGIBILITY
-                    </span>
-                    <h4 className="font-['Poppins'] text-sm sm:text-base font-bold text-[#0e0f0f] mt-1.5">
-                      Civil Service Professional Eligibility
-                    </h4>
-                    <p className="text-xs sm:text-sm text-[#74777e] mt-1 font-medium">
-                      Civil Service Commission • Passed 2023
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Skills & Competencies */}
-              <div className="bg-white rounded-2xl border border-[#efedf0] p-6 sm:p-7 shadow-sm flex flex-col">
-                <div className="flex items-center gap-2.5 pb-4 border-b border-[#efedf0] mb-6">
-                  <span className="material-symbols-outlined text-[22px] text-[#ba0c00]">
-                    psychology
-                  </span>
-                  <h3 className="font-['Poppins'] text-lg font-bold text-[#0e0f0f]">
-                    Skills &amp; Competencies
-                  </h3>
-                </div>
-
-                <div className="space-y-5 flex-1">
-                  {categorizedSkills.map((category) => {
-                    if (category.items.length === 0) return null;
-                    return (
-                      <div key={category.id} className="space-y-2.5">
-                        <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#43474d]">
-                          {category.label}
-                        </h4>
-                        <div className="flex flex-wrap gap-2.5">
-                          {category.items.map((skill) => (
-                            <span
-                              key={skill}
-                              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#f8f8fa] border border-[#efedf0] text-xs font-semibold text-[#0e0f0f] shadow-2xs hover:bg-white hover:border-[#c4c6ce] transition-colors"
-                            >
-                              <span className="material-symbols-outlined text-[16px] text-[#ba0c00]">
-                                check_circle
-                              </span>
-                              <span>{skill}</span>
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {skills.length === 0 && (
-                    <div className="text-xs text-[#74777e] italic p-6 bg-[#faf9fb] rounded-xl border border-[#efedf0] text-center">
-                      Walang nakatalang kasanayan sa profile.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB: Dedicated Profiling ng Skills & Education */}
-        {activeTab === 'skills' && (
-          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#efedf0] shadow-sm space-y-6">
-            <div className="border-b border-[#efedf0] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                  Youth Leadership Intake
-                </span>
-                <h2 className="font-['Poppins'] text-2xl font-extrabold text-[#0e0f0f] mt-1">
-                  Profiling ng Hard Skills &amp; Educational Attainment
-                </h2>
+            {/* Hard Skills & Youth Competencies Card (2-Column: Natukoy na Kasanayan | Background sa Edukasyon) */}
+            <div className="bg-white rounded-2xl border border-[#efedf0] p-6 sm:p-7 shadow-sm space-y-6">
+              {/* Header & Divider */}
+              <div className="border-b border-[#efedf0] pb-4">
+                <h3 className="font-['Poppins'] text-lg font-bold text-[#0e0f0f]">
+                  Hard Skills &amp; Youth Competencies
+                </h3>
                 <p className="text-xs text-[#74777e] mt-1">
-                  I-dokumento ang iyong mga natatanging kakayahan, kurso, at pinag-aralan upang magamit sa pagpaplano ng mga proyekto ng konseho.
+                  Opisyal na talaan ng mga kakayahan at kwalipikasyon para sa pamumuno sa barangay.
                 </p>
               </div>
-              <button
-                onClick={handleSaveProfile}
-                disabled={saveLoading}
-                className="px-5 py-2.5 bg-[#ba0c00] hover:bg-[#920a00] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer self-start sm:self-auto shadow-sm flex items-center gap-1.5"
-              >
-                <span className="material-symbols-outlined text-[16px]">save</span>
-                {saveLoading ? 'Nai-save...' : 'I-save ang Profile'}
-              </button>
-            </div>
 
-            {saveSuccess && (
-              <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl flex items-center gap-2">
-                <span className="material-symbols-outlined text-emerald-600 text-base">check_circle</span>
-                <span>{saveSuccess}</span>
-              </div>
-            )}
-
-            {/* Currently Active Skills */}
-            <div className="space-y-3">
-              <label className="block text-xs font-bold text-[#0e0f0f] uppercase tracking-wider">
-                Iyong Mga Hard Skills ({skills.length}):
-              </label>
-              <div className="flex flex-wrap gap-2 p-3.5 bg-[#faf9fb] rounded-xl border border-[#efedf0] min-h-12">
-                {skills.length === 0 ? (
-                  <span className="text-xs text-[#74777e] italic">
-                    Wala pang napipiling skills. Pumili mula sa suggested skills sa ibaba.
-                  </span>
-                ) : (
-                  skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#242424] text-white shadow-2xs"
-                    >
-                      <span>{skill}</span>
-                      <button
-                        type="button"
-                        onClick={() => setSkills(skills.filter((s) => s !== skill))}
-                        className="hover:text-red-300 cursor-pointer"
-                        title="Alisin"
-                      >
-                        <span className="material-symbols-outlined text-[14px]">close</span>
-                      </button>
+              {/* 2-Column Grid: Natukoy na Kasanayan | Background sa Edukasyon */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                {/* Left Column: Natukoy na Kasanayan */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-3 border-b border-[#efedf0]/60">
+                    <span className="material-symbols-outlined text-[18px] text-[#ba0c00]">
+                      psychology
                     </span>
-                  ))
-                )}
-              </div>
-            </div>
+                    <h4 className="font-['Poppins'] text-sm sm:text-base font-bold text-[#0e0f0f]">
+                      Natukoy na Kasanayan
+                    </h4>
+                    <span className="text-[11px] font-semibold text-[#74777e] ml-auto">
+                      {skills.length} Kasanayan
+                    </span>
+                  </div>
 
-            {/* Suggested Skills Selector */}
-            <div className="space-y-2.5">
-              <label className="block text-xs font-bold text-[#74777e] uppercase tracking-wider">
-                Mabilis na Pagpili ng Skills (I-click upang i-toggle):
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {SUGGESTED_SKILLS.map((item) => {
-                  const active = skills.includes(item);
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() => {
-                        if (active) {
-                          setSkills(skills.filter((s) => s !== item));
-                        } else {
-                          setSkills([...skills, item]);
-                        }
-                      }}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${active
-                        ? 'bg-emerald-600 text-white shadow-xs'
-                        : 'bg-[#efedf0] text-[#43474d] hover:bg-neutral-200'
-                        }`}
-                    >
-                      <span className="material-symbols-outlined text-[14px]">
-                        {active ? 'check' : 'add'}
+                  {/* Grouped Skills */}
+                  <div className="space-y-5">
+                    {categorizedSkills.map((category) => {
+                      if (category.items.length === 0) return null;
+                      return (
+                        <div key={category.id} className="space-y-2.5">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-[#43474d] block">
+                            {category.label}
+                          </span>
+                          <div className="flex flex-wrap gap-2">
+                            {category.items.map((skill) => (
+                              <span
+                                key={skill}
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#f8f8fa] border border-[#efedf0] text-xs font-semibold text-[#0e0f0f] shadow-2xs hover:bg-white hover:border-[#c4c6ce] transition-colors"
+                              >
+                                <span className="material-symbols-outlined text-[16px] text-[#ba0c00]">
+                                  check_circle
+                                </span>
+                                <span>{skill}</span>
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {skills.length === 0 && (
+                      <div className="text-xs text-[#74777e] italic p-5 bg-[#faf9fb] rounded-xl border border-[#efedf0] text-center">
+                        Walang nakatalang kasanayan sa profile.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right Column: Background sa Edukasyon */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-3 border-b border-[#efedf0]/60">
+                    <span className="material-symbols-outlined text-[18px] text-[#ba0c00]">
+                      school
+                    </span>
+                    <h4 className="font-['Poppins'] text-sm sm:text-base font-bold text-[#0e0f0f]">
+                      Background sa Edukasyon
+                    </h4>
+                  </div>
+
+                  <div className="space-y-3">
+                    {/* Antas ng Edukasyon */}
+                    <div className="bg-[#f8f8fa] rounded-xl p-4 sm:p-5 border border-[#efedf0]/60">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#74777e] block">
+                        Antas ng Edukasyon
                       </span>
-                      {item}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                      <p className="font-['Poppins'] text-sm sm:text-base font-bold text-[#ba0c00] mt-1">
+                        {educationalAttainment || "Bachelor's Degree / College Graduate"}
+                      </p>
+                    </div>
 
-            {/* Add Custom Skill */}
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Maglagay ng ibang kakaibang skill (hal. Drone Operation, Sign Language, DRRM First Responder)..."
-                value={customSkillInput}
-                onChange={(e) => setCustomSkillInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const trimmed = customSkillInput.trim();
-                    if (trimmed && !skills.includes(trimmed)) {
-                      setSkills([...skills, trimmed]);
-                      setCustomSkillInput('');
-                    }
-                  }
-                }}
-                className="flex-1 px-3.5 py-2.5 rounded-lg border border-[#c4c6ce] text-xs outline-none focus:border-[#ba0c00]"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  const trimmed = customSkillInput.trim();
-                  if (trimmed && !skills.includes(trimmed)) {
-                    setSkills([...skills, trimmed]);
-                    setCustomSkillInput('');
-                  }
-                }}
-                className="px-4 py-2.5 bg-[#242424] hover:bg-[#ba0c00] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
-              >
-                Idagdag
-              </button>
-            </div>
+                    {/* Kurso / Programa & Paaralan */}
+                    <div className="bg-[#f8f8fa] rounded-xl p-4 sm:p-5 border border-[#efedf0]/60">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#74777e] block">
+                        Kurso / Programa
+                      </span>
+                      <h5 className="font-['Poppins'] text-sm sm:text-base font-bold text-[#0e0f0f] mt-1">
+                        {educationDegree || 'BS Information Technology'}
+                      </h5>
+                      <p className="text-xs text-[#43474d] mt-1 font-medium">
+                        {educationSchool || 'Polytechnic University of the Philippines – Manila'}
+                      </p>
+                    </div>
 
-            {/* Educational Attainment Section */}
-            <div className="pt-4 border-t border-[#efedf0] space-y-4">
-              <h3 className="font-['Poppins'] text-base font-bold text-[#0e0f0f]">
-                Impormasyon sa Edukasyon
-              </h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-[#0e0f0f] uppercase mb-1">
-                    Antas ng Pinag-aralan
-                  </label>
-                  <select
-                    value={educationalAttainment}
-                    onChange={(e) => setEducationalAttainment(e.target.value)}
-                    className="w-full h-11 px-3 bg-white border border-[#c4c6ce] rounded-lg text-xs font-medium focus:border-[#ba0c00] cursor-pointer"
-                  >
-                    {EDUCATIONAL_LEVELS.map((lvl) => (
-                      <option key={lvl} value={lvl}>
-                        {lvl}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-[#0e0f0f] uppercase mb-1">
-                    Kurso / Programa / Strand
-                  </label>
-                  <input
-                    type="text"
-                    value={educationDegree}
-                    onChange={(e) => setEducationDegree(e.target.value)}
-                    placeholder="Hal. BS Information Technology"
-                    className="w-full h-11 px-3 bg-white border border-[#c4c6ce] rounded-lg text-xs focus:border-[#ba0c00]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-[#0e0f0f] uppercase mb-1">
-                    Paaralan / Pamantasan
-                  </label>
-                  <input
-                    type="text"
-                    value={educationSchool}
-                    onChange={(e) => setEducationSchool(e.target.value)}
-                    placeholder="Hal. Taguig City University"
-                    className="w-full h-11 px-3 bg-white border border-[#c4c6ce] rounded-lg text-xs focus:border-[#ba0c00]"
-                  />
+                    {/* Verified Eligibility */}
+                    <div className="bg-[#f8f8fa] rounded-xl p-4 sm:p-5 border border-[#efedf0]/60">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#74777e] block">
+                        VERIFIED ELIGIBILITY
+                      </span>
+                      <h5 className="font-['Poppins'] text-sm font-bold text-[#0e0f0f] mt-1">
+                        Civil Service Professional Eligibility
+                      </h5>
+                      <p className="text-xs text-[#74777e] mt-0.5 font-medium">
+                        Civil Service Commission • Passed 2023
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Youth Advocacy */}
-            <div className="pt-4 border-t border-[#efedf0] space-y-2">
-              <label className="block text-xs font-bold text-[#0e0f0f] uppercase">
-                Youth Advocacy &amp; Personal Mission Statement
-              </label>
-              <textarea
-                rows={3}
-                value={bioAdvocacy}
-                onChange={(e) => setBioAdvocacy(e.target.value)}
-                className="w-full p-3 bg-white border border-[#c4c6ce] rounded-lg text-xs focus:border-[#ba0c00] outline-none"
-                placeholder="Isulat ang iyong pananaw at ipinaglalabang adbokasiya para sa kabataan ng iyong barangay..."
-              />
             </div>
           </div>
         )}
@@ -1657,15 +1474,15 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* TAB 3: Edit Profile & Official Portrait */}
+        {/* TAB 3: Edit Profile & Skills */}
         {activeTab === 'edit' && (
-          <div className="max-w-2xl bg-white p-6 sm:p-8 rounded-2xl border border-[#efedf0] shadow-sm space-y-6">
+          <div className="max-w-3xl bg-white p-6 sm:p-8 rounded-2xl border border-[#efedf0] shadow-sm space-y-6">
             <div>
               <h2 className="font-['Poppins'] text-xl font-bold text-[#0e0f0f]">
-                Edit Council Profile &amp; Official Portrait
+                Edit Council Profile &amp; Skills
               </h2>
               <p className="text-xs text-[#74777e] mt-1">
-                Update your legal name, formal headshot portrait, contact line, and public advocacy statement.
+                I-update ang inyong legal na pangalan, opisyal na larawan, mga kasanayan (skills), at background sa edukasyon.
               </p>
             </div>
 
@@ -1892,139 +1709,167 @@ export default function DashboardPage() {
                 />
               </div>
 
-              {/* Council & Legislative Performance Records */}
-              <div className="p-5 bg-[#faf9fb] rounded-xl border border-[#efedf0] space-y-4">
-                <div className="flex items-center justify-between border-b border-[#efedf0] pb-2.5">
-                  <span className="text-xs font-bold text-[#0e0f0f] uppercase tracking-wider block">
-                    Legislative &amp; Council Performance Records
-                  </span>
+              {/* Hard Skills Profiling Section */}
+              <div className="pt-4 border-t border-[#efedf0] space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[20px] text-[#ba0c00]">psychology</span>
+                  <h3 className="font-['Poppins'] text-sm sm:text-base font-bold text-[#0e0f0f]">
+                    Hard Skills &amp; Youth Competencies
+                  </h3>
                 </div>
 
-                {/* Authored Measures Ledger in Profile */}
-                <div className="space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <div>
-                      <label className="block text-xs font-bold text-[#0e0f0f]">
-                        Passed Measures &amp; Authored Resolutions ({measures.length})
-                      </label>
-                      <p className="text-[11px] text-[#74777e]">
-                        Auto-tallied passed count: <strong className="text-[#ba0c00] font-mono">{passedMeasures}</strong>
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMeasureTitle('');
-                        setMeasureResNo('');
-                        setMeasureSummary('');
-                        setMeasureError(null);
-                        setShowAddMeasureModal(true);
-                      }}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ba0c00] hover:bg-[#e81100] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer self-start sm:self-auto shadow-sm"
-                    >
-                      <span className="material-symbols-outlined text-[14px]">add</span>
-                      Add Resolution
-                    </button>
-                  </div>
-
-                  {measures.length === 0 ? (
-                    <div className="p-3 rounded-lg bg-white border border-dashed border-[#efedf0] text-center text-xs text-[#74777e]">
-                      Walang nakatalang resolusyon. I-click ang "+ Add Resolution" upang itala ang inyong mga panukala.
-                    </div>
-                  ) : (
-                    <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                      {measures.map((m) => (
-                        <div
-                          key={m.id}
-                          className="p-3 bg-white rounded-lg border border-[#efedf0] flex items-center justify-between gap-3 text-xs shadow-xs"
+                {/* Currently Active Skills */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-[#0e0f0f] uppercase tracking-wider">
+                    Iyong Mga Napiling Kasanayan ({skills.length}):
+                  </label>
+                  <div className="flex flex-wrap gap-2 p-3.5 bg-[#faf9fb] rounded-xl border border-[#efedf0] min-h-12">
+                    {skills.length === 0 ? (
+                      <span className="text-xs text-[#74777e] italic">
+                        Wala pang napipiling skills. Pumili mula sa suggested skills sa ibaba o mag-type ng bago.
+                      </span>
+                    ) : (
+                      skills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#242424] text-white shadow-2xs"
                         >
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-[11px] text-[#ba0c00] font-bold shrink-0">
-                                {m.resolution_number || 'RES-SK'}
-                              </span>
-                              <span
-                                className={`text-[9px] font-bold px-1.5 py-0.2 rounded shrink-0 ${m.status === 'passed' || m.status === 'adopted' || m.status === 'enacted'
-                                  ? 'bg-emerald-50 text-emerald-700'
-                                  : 'bg-amber-50 text-amber-700'
-                                  }`}
-                              >
-                                {m.status_badge || m.status}
-                              </span>
-                              <span className="font-semibold text-[#0e0f0f] truncate">
-                                {m.title}
-                              </span>
-                            </div>
-                            <div className="text-[10px] text-[#74777e] mt-0.5">
-                              {m.category} • {m.authorship_label || 'Principal Author'} • {m.date_approved ? new Date(m.date_approved).toLocaleDateString('en-PH') : 'Pending'}
-                            </div>
-                          </div>
+                          <span>{skill}</span>
                           <button
                             type="button"
-                            onClick={() => handleDeleteMeasure(m.id)}
-                            className="p-1 text-[#74777e] hover:text-rose-600 transition-colors cursor-pointer shrink-0"
-                            title="Delete Measure Record"
+                            onClick={() => setSkills(skills.filter((s) => s !== skill))}
+                            className="hover:text-red-300 cursor-pointer"
+                            title="Alisin"
                           >
-                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                            <span className="material-symbols-outlined text-[14px]">close</span>
                           </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Session Attendance Rate (Secretary-Certified Lock) */}
-                <div className="pt-2 border-t border-[#efedf0] space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-1.5 text-xs font-bold text-[#0e0f0f]">
-                      <span>Session Attendance Rate (%)</span>
-                      <span className="material-symbols-outlined text-[14px] text-[#74777e]" title="Locked - Certified by SK Secretary Roll Call Ledger">lock</span>
-                    </label>
-
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <div className="relative flex-1">
-                      <input
-                        type="number"
-                        step="0.1"
-                        min={0}
-                        max={100}
-                        disabled={!canEditDemographics}
-                        value={sessionAttendance}
-                        onChange={(e) => setSessionAttendance(parseFloat(e.target.value) || 0)}
-                        className={`w-full h-11 px-3 rounded-lg text-sm transition-all font-mono font-bold ${canEditDemographics
-                          ? 'bg-white text-[#1b1c1e] border border-[#c4c6ce] focus:outline-none focus:border-[#ba0c00]'
-                          : 'bg-[#f5f3f6] text-[#ba0c00] border border-[#e2e4ea] cursor-not-allowed select-none'
-                          }`}
-                      />
-                      <span className="absolute right-3 top-3 text-xs text-[#74777e] font-semibold">
-                        %
-                      </span>
-                    </div>
-
-                    <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] leading-tight flex items-center gap-2">
-                      <span className="material-symbols-outlined text-emerald-600 text-lg shrink-0">how_to_reg</span>
-                      <div>
-                        <strong className="block font-bold">Secretary Roll Call Certified</strong>
-                        <span className="text-[10px] text-emerald-700">Reflects active Sanggunian session attendance ledger.</span>
-                      </div>
-                    </div>
+                        </span>
+                      ))
+                    )}
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-[#efedf0]">
-                  <label className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={skmtCompliant}
-                      onChange={(e) => setSkmtCompliant(e.target.checked)}
-                      className="w-4 h-4 rounded text-[#ba0c00] focus:ring-0 cursor-pointer accent-[#ba0c00]"
-                    />
-                    <span className="text-xs font-semibold text-[#0e0f0f]">
-                      DILG Sangguniang Kabataan Mandatory Training (SKMT) Certified
-                    </span>
+                {/* Suggested Skills Selector */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-[#74777e] uppercase tracking-wider">
+                    Mabilis na Pagpili ng Skills (I-click upang i-toggle):
                   </label>
+                  <div className="flex flex-wrap gap-2">
+                    {SUGGESTED_SKILLS.map((item) => {
+                      const active = skills.includes(item);
+                      return (
+                        <button
+                          key={item}
+                          type="button"
+                          onClick={() => {
+                            if (active) {
+                              setSkills(skills.filter((s) => s !== item));
+                            } else {
+                              setSkills([...skills, item]);
+                            }
+                          }}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${active
+                            ? 'bg-emerald-600 text-white shadow-xs'
+                            : 'bg-[#efedf0] text-[#43474d] hover:bg-neutral-200'
+                            }`}
+                        >
+                          <span className="material-symbols-outlined text-[14px]">
+                            {active ? 'check' : 'add'}
+                          </span>
+                          {item}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Add Custom Skill */}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Maglagay ng ibang skill (hal. Drone Operation, Sign Language)..."
+                    value={customSkillInput}
+                    onChange={(e) => setCustomSkillInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const trimmed = customSkillInput.trim();
+                        if (trimmed && !skills.includes(trimmed)) {
+                          setSkills([...skills, trimmed]);
+                          setCustomSkillInput('');
+                        }
+                      }
+                    }}
+                    className="flex-1 px-3.5 py-2.5 rounded-lg border border-[#c4c6ce] text-xs outline-none focus:border-[#ba0c00]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const trimmed = customSkillInput.trim();
+                      if (trimmed && !skills.includes(trimmed)) {
+                        setSkills([...skills, trimmed]);
+                        setCustomSkillInput('');
+                      }
+                    }}
+                    className="px-4 py-2.5 bg-[#242424] hover:bg-[#ba0c00] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer"
+                  >
+                    Idagdag
+                  </button>
+                </div>
+              </div>
+
+              {/* Educational Attainment Section */}
+              <div className="pt-4 border-t border-[#efedf0] space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[20px] text-[#ba0c00]">school</span>
+                  <h3 className="font-['Poppins'] text-sm sm:text-base font-bold text-[#0e0f0f]">
+                    Impormasyon sa Edukasyon
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-[#0e0f0f] uppercase mb-1">
+                      Antas ng Pinag-aralan
+                    </label>
+                    <select
+                      value={educationalAttainment}
+                      onChange={(e) => setEducationalAttainment(e.target.value)}
+                      className="w-full h-11 px-3 bg-white border border-[#c4c6ce] rounded-lg text-xs font-medium focus:border-[#ba0c00] cursor-pointer"
+                    >
+                      {EDUCATIONAL_LEVELS.map((lvl) => (
+                        <option key={lvl} value={lvl}>
+                          {lvl}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#0e0f0f] uppercase mb-1">
+                      Kurso / Programa / Strand
+                    </label>
+                    <input
+                      type="text"
+                      value={educationDegree}
+                      onChange={(e) => setEducationDegree(e.target.value)}
+                      placeholder="Hal. BS Information Technology"
+                      className="w-full h-11 px-3 bg-white border border-[#c4c6ce] rounded-lg text-xs focus:border-[#ba0c00]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[#0e0f0f] uppercase mb-1">
+                      Paaralan / Pamantasan
+                    </label>
+                    <input
+                      type="text"
+                      value={educationSchool}
+                      onChange={(e) => setEducationSchool(e.target.value)}
+                      placeholder="Hal. Polytechnic University of the Philippines"
+                      className="w-full h-11 px-3 bg-white border border-[#c4c6ce] rounded-lg text-xs focus:border-[#ba0c00]"
+                    />
+                  </div>
                 </div>
               </div>
 

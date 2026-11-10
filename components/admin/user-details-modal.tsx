@@ -259,7 +259,7 @@ export default function UserDetailsModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
         <div className="bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-3 border-[#ba0c00] border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-xs font-bold text-[#43474d]">Loading Official Dossier...</span>
+          <span className="text-xs font-bold text-[#43474d]">Loading Official Records...</span>
         </div>
       </div>
     );

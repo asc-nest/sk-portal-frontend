@@ -49,12 +49,12 @@ export default function OfficialNavbar({ className = '' }: OfficialNavbarProps) 
               SK
             </div>
             <div className="flex flex-col text-left">
-                <span className="font-['Poppins'] text-base sm:text-lg font-bold text-[#0e0f0f] leading-none tracking-tight group-hover:text-[#ba0c00] transition-colors line-clamp-1">
+                <span suppressHydrationWarning className="font-['Poppins'] text-base sm:text-lg font-bold text-[#0e0f0f] leading-none tracking-tight group-hover:text-[#ba0c00] transition-colors line-clamp-1">
                   {settings.portal_name || 'City of Taguig'}
                 </span>
-                  <span className="text-[10px] sm:text-[11px] font-semibold text-[#74777e] tracking-wider uppercase mt-0.5 line-clamp-1">
-                    {settings.jurisdiction_name || 'Sangguniang Kabataan Federation'}
-                  </span>
+                <span suppressHydrationWarning className="text-[10px] sm:text-[11px] font-semibold text-[#74777e] tracking-wider uppercase mt-0.5 line-clamp-1">
+                  {settings.jurisdiction_name || 'Sangguniang Kabataan Federation'}
+                </span>
                 </div>
               </Link>
             </div>

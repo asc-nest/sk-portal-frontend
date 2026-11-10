@@ -30,20 +30,7 @@ export const DEFAULT_SETTINGS: SystemSettings = {
 const SETTINGS_STORAGE_KEY = 'sk_public_settings';
 
 export function useSystemSettings() {
-  const [settings, setSettings] = useState<SystemSettings>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const cached = localStorage.getItem(SETTINGS_STORAGE_KEY);
-        if (cached) {
-          return { ...DEFAULT_SETTINGS, ...JSON.parse(cached) };
-        }
-      } catch {
-        // Ignore JSON parse errors
-      }
-    }
-    return DEFAULT_SETTINGS;
-  });
-
+  const [settings, setSettings] = useState<SystemSettings>(DEFAULT_SETTINGS);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchSettings = useCallback(async () => {
@@ -70,6 +57,21 @@ export function useSystemSettings() {
   }, []);
 
   useEffect(() => {
+    // 1. Read cached settings on client mount (safe from SSR hydration mismatch)
+    try {
+      const cached = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        setSettings((prev) => ({ ...prev, ...parsed }));
+        if (parsed.portal_name && typeof document !== 'undefined') {
+          document.title = parsed.portal_name;
+        }
+      }
+    } catch {
+      // Ignore JSON parse errors
+    }
+
+    // 2. Fetch fresh settings from backend API
     fetchSettings();
 
     const handleSettingsUpdated = () => {
