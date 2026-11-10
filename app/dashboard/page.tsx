@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
@@ -84,6 +84,56 @@ export default function DashboardPage() {
   const [generatedInviteUrl, setGeneratedInviteUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
+
+  // Barangay Council Directory Search & Filter State
+  const [councilSearch, setCouncilSearch] = useState('');
+  const [councilRoleFilter, setCouncilRoleFilter] = useState('all');
+  const [councilPurokFilter, setCouncilPurokFilter] = useState('all');
+
+  const availablePuroks = useMemo(() => {
+    const set = new Set<string>();
+    councilOfficials.forEach((o) => {
+      if (o.purok_sitio && o.purok_sitio.trim()) {
+        set.add(o.purok_sitio.trim());
+      }
+    });
+    return Array.from(set).sort();
+  }, [councilOfficials]);
+
+  const filteredCouncilOfficials = useMemo(() => {
+    return councilOfficials.filter((officer) => {
+      // 1. Text search (Name, Position, Committee, Contact, Purok)
+      const q = councilSearch.trim().toLowerCase();
+      if (q) {
+        const matchName = officer.full_name?.toLowerCase().includes(q);
+        const matchPos = officer.position_title?.toLowerCase().includes(q) || officer.position?.toLowerCase().includes(q);
+        const matchCommittee = officer.committee_assigned?.toLowerCase().includes(q);
+        const matchContact = officer.contact_number?.toLowerCase().includes(q);
+        const matchPurok = officer.purok_sitio?.toLowerCase().includes(q);
+        if (!matchName && !matchPos && !matchCommittee && !matchContact && !matchPurok) {
+          return false;
+        }
+      }
+
+      // 2. Position Filter
+      if (councilRoleFilter !== 'all') {
+        const pos = (officer.position || '').toLowerCase();
+        const title = (officer.position_title || '').toLowerCase();
+        const target = councilRoleFilter.toLowerCase();
+        if (target === 'chairperson' && !pos.includes('chair') && !title.includes('chair')) return false;
+        if (target === 'kagawad' && !pos.includes('kagawad') && !title.includes('kagawad')) return false;
+        if (target === 'secretary' && !pos.includes('sec') && !title.includes('sec')) return false;
+        if (target === 'treasurer' && !pos.includes('treas') && !title.includes('treas')) return false;
+      }
+
+      // 3. Purok Filter
+      if (councilPurokFilter !== 'all') {
+        if ((officer.purok_sitio || '').trim() !== councilPurokFilter) return false;
+      }
+
+      return true;
+    });
+  }, [councilOfficials, councilSearch, councilRoleFilter, councilPurokFilter]);
 
   useEffect(() => {
     async function loadSession() {
@@ -1492,7 +1542,7 @@ export default function DashboardPage() {
         {activeTab === 'council' && (
           <div className="space-y-6">
             <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#efedf0] shadow-sm">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div>
                   <span className="text-xs font-bold text-[#ba0c00] uppercase tracking-wider">
                     Barangay Youth Council Directory
@@ -1505,15 +1555,80 @@ export default function DashboardPage() {
                   </p>
                 </div>
 
-                {isChairOrAdmin && (
-                  <button
-                    onClick={() => setActiveTab('invite')}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#ba0c00] hover:bg-[#e81100] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shrink-0"
-                  >
-                    <span className="material-symbols-outlined text-sm">add_link</span>
-                    Invite Official
-                  </button>
-                )}
+                {/* Search & Filter Controls Group */}
+                <div className="flex flex-wrap items-center gap-2.5">
+                  {/* Search Input Box */}
+                  <div className="relative flex-1 sm:w-60 min-w-[200px]">
+                    <span className="material-symbols-outlined absolute left-3 top-2.5 text-base text-[#74777e]">
+                      search
+                    </span>
+                    <input
+                      type="text"
+                      value={councilSearch}
+                      onChange={(e) => setCouncilSearch(e.target.value)}
+                      placeholder="Maghanap ng opisyal, komite..."
+                      className="w-full h-10 pl-9 pr-8 bg-[#f5f3f6] focus:bg-white text-xs text-[#0e0f0f] rounded-xl border border-[#efedf0] focus:border-[#ba0c00] outline-none transition-all placeholder:text-[#74777e]"
+                    />
+                    {councilSearch && (
+                      <button
+                        type="button"
+                        onClick={() => setCouncilSearch('')}
+                        className="absolute right-2.5 top-2.5 text-[#74777e] hover:text-[#0e0f0f] cursor-pointer"
+                        title="I-clear"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">close</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Position Filter Dropdown */}
+                  <div className="relative w-40 sm:w-44">
+                    <select
+                      value={councilRoleFilter}
+                      onChange={(e) => setCouncilRoleFilter(e.target.value)}
+                      className="w-full h-10 pl-3 pr-8 bg-[#f5f3f6] focus:bg-white text-xs font-semibold text-[#0e0f0f] rounded-xl border border-[#efedf0] focus:border-[#ba0c00] outline-none transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="all">Lahat ng Posisyon</option>
+                      <option value="chairperson">SK Chairperson</option>
+                      <option value="kagawad">SK Kagawad</option>
+                      <option value="secretary">SK Secretary</option>
+                      <option value="treasurer">SK Treasurer</option>
+                    </select>
+                    <span className="material-symbols-outlined absolute right-2.5 top-2.5 text-base text-[#74777e] pointer-events-none">
+                      expand_more
+                    </span>
+                  </div>
+
+                  {/* Purok Filter (if multiple puroks exist) */}
+                  {availablePuroks.length > 1 && (
+                    <div className="relative w-36">
+                      <select
+                        value={councilPurokFilter}
+                        onChange={(e) => setCouncilPurokFilter(e.target.value)}
+                        className="w-full h-10 pl-3 pr-8 bg-[#f5f3f6] focus:bg-white text-xs font-semibold text-[#0e0f0f] rounded-xl border border-[#efedf0] focus:border-[#ba0c00] outline-none transition-all appearance-none cursor-pointer"
+                      >
+                        <option value="all">Lahat ng Purok</option>
+                        {availablePuroks.map((purok) => (
+                          <option key={purok} value={purok}>{purok}</option>
+                        ))}
+                      </select>
+                      <span className="material-symbols-outlined absolute right-2.5 top-2.5 text-base text-[#74777e] pointer-events-none">
+                        expand_more
+                      </span>
+                    </div>
+                  )}
+
+                  {isChairOrAdmin && (
+                    <button
+                      onClick={() => setActiveTab('invite')}
+                      className="inline-flex items-center gap-1.5 h-10 px-4 bg-[#ba0c00] hover:bg-[#e81100] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shrink-0 shadow-xs"
+                    >
+                      <span className="material-symbols-outlined text-sm">add_link</span>
+                      <span className="hidden sm:inline">Invite Official</span>
+                      <span className="sm:hidden">Invite</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {councilLoading ? (
@@ -1526,9 +1641,25 @@ export default function DashboardPage() {
                 <div className="text-center py-10 text-xs text-[#74777e]">
                   Walang nakitang kasamahan sa konseho.
                 </div>
+              ) : filteredCouncilOfficials.length === 0 ? (
+                <div className="text-center py-12 text-xs text-[#74777e] bg-[#faf9fb] rounded-xl border border-[#efedf0] mt-6 space-y-2">
+                  <span className="material-symbols-outlined text-3xl text-[#74777e]">search_off</span>
+                  <p className="font-semibold text-[#0e0f0f]">Walang natagpuang opisyal na tumutugma sa search o filter.</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCouncilSearch('');
+                      setCouncilRoleFilter('all');
+                      setCouncilPurokFilter('all');
+                    }}
+                    className="text-xs text-[#ba0c00] font-bold hover:underline cursor-pointer"
+                  >
+                    I-clear ang search at filter
+                  </button>
+                </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                  {councilOfficials.map((officer) => (
+                  {filteredCouncilOfficials.map((officer) => (
                     <div
                       key={officer.id}
                       className="bg-[#faf9fb] rounded-xl p-4 border border-[#efedf0] hover:border-[#ba0c00]/30 transition-all flex flex-col justify-between"
