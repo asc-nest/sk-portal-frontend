@@ -1,0 +1,13 @@
+{
+  "$description": "Starter values: review and connect to the existing styling system before use.",
+  "colors": {
+    "background": "#ffffff",
+    "foreground": "#111827",
+    "primary": "#1d4ed8",
+    "danger": "#b91c1c",
+    "border": "#d1d5db"
+  },
+  "spacing": { "xs": "0.25rem", "sm": "0.5rem", "md": "1rem", "lg": "1.5rem", "xl": "2rem" },
+  "typography": { "fontFamily": "system-ui, sans-serif", "bodySize": "1rem", "lineHeight": 1.5 },
+  "radii": { "sm": "0.25rem", "md": "0.5rem" }
+}
