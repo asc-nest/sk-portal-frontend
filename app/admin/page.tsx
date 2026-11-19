@@ -12,6 +12,22 @@ import RoleModal from '@/components/admin/role-modal';
 import CivicLoader from '@/components/ui/civic-loader';
 import { TAGUIG_BARANGAYS } from '@/lib/constants';
 
+function formatCustomDateTime(dateString: string | Date | undefined | null) {
+  if (!dateString) return '';
+  const d = new Date(dateString);
+  if (isNaN(d.getTime())) return '';
+  let hours = d.getHours();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const strHours = String(hours).padStart(2, '0');
+  const strMinutes = String(d.getMinutes()).padStart(2, '0');
+  const strMonth = String(d.getMonth() + 1).padStart(2, '0');
+  const strDay = String(d.getDate()).padStart(2, '0');
+  const strYear = d.getFullYear();
+  return `${strHours}:${strMinutes}${ampm}-${strMonth}${strDay}${strYear}`;
+}
+
 export default function SuperAdminPage() {
   const router = useRouter();
 
@@ -560,7 +576,7 @@ export default function SuperAdminPage() {
                             {log.description}
                           </p>
                           <div className="flex items-center gap-2 text-[10px] text-[#74777e] mt-0.5">
-                            <span>{new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            <span>{formatCustomDateTime(log.created_at)}</span>
                             <span>•</span>
                             <span className="font-mono">{log.action}</span>
                           </div>
@@ -923,10 +939,7 @@ export default function SuperAdminPage() {
                   rolesData?.roles?.map((role: any) => (
                     <div key={role.id} className="bg-white p-6 rounded-2xl border border-[#efedf0] shadow-xs flex flex-col justify-between space-y-4">
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-mono font-bold text-[#ba0c00] bg-red-50 px-2 py-0.5 rounded">
-                            {role.name}
-                          </span>
+                        <div className="flex items-center justify-end">
                           <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
                             {role.user_count} Assigned Users
                           </span>
@@ -1039,19 +1052,18 @@ export default function SuperAdminPage() {
                         <th className="py-3 px-4">Administrator</th>
                         <th className="py-3 px-4">Action</th>
                         <th className="py-3 px-4">Description</th>
-                        <th className="py-3 px-4">IP Address</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#efedf0]">
                       {logsLoading ? (
                         <tr>
-                          <td colSpan={5} className="py-12 text-center text-[#74777e]">
+                          <td colSpan={4} className="py-12 text-center text-[#74777e]">
                             Loading audit logs...
                           </td>
                         </tr>
                       ) : activityLogs.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="py-12 text-center text-[#74777e]">
+                          <td colSpan={4} className="py-12 text-center text-[#74777e]">
                             No activity records found.
                           </td>
                         </tr>
@@ -1059,7 +1071,7 @@ export default function SuperAdminPage() {
                         activityLogs.map((log) => (
                           <tr key={log.id} className="hover:bg-[#faf9fb] transition-colors">
                             <td className="py-3 px-4 text-[#74777e] font-mono text-[11px] whitespace-nowrap">
-                              {new Date(log.created_at).toLocaleString()}
+                              {formatCustomDateTime(log.created_at)}
                             </td>
                             <td className="py-3 px-4 font-bold text-[#0e0f0f]">
                               {log.user?.name || 'System'}
@@ -1071,9 +1083,6 @@ export default function SuperAdminPage() {
                             </td>
                             <td className="py-3 px-4 text-[#43474d] text-xs">
                               {log.description}
-                            </td>
-                            <td className="py-3 px-4 text-[#74777e] font-mono text-[11px]">
-                              {log.ip_address || '127.0.0.1'}
                             </td>
                           </tr>
                         ))
